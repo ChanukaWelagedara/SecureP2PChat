@@ -226,18 +226,3 @@ Start chatting with alice. Type 'quit' to end chat.
 3. Click "List Online Users"
 4. Select peer and start chatting
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Implement security improvements
-4. Test thoroughly
-5. Submit a pull request
-
-## 📜 License
-
-This project is for educational purposes in Information Security coursework.
-
-## ⚠️ Security Notice
-
-This implementation is designed for educational purposes. For production use, consider additional security measures and professional security auditing.
