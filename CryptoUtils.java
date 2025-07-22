@@ -14,10 +14,12 @@ import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.DHParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoUtils {
@@ -26,7 +28,7 @@ public class CryptoUtils {
 
     // Fixed, standard DH parameters (2048-bit MODP Group)
     private static final BigInteger DH_P = new BigInteger(
-                    "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1" +
+            "FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD1" +
                     "29024E088A67CC74020BBEA63B139B22514A08798E3404DD" +
                     "EF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245" +
                     "E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7ED" +
@@ -141,16 +143,53 @@ public class CryptoUtils {
         return keyGen.generateKeyPair();
     }
 
+    // public static String encryptWithAES(String message, SecretKey key) throws
+    // Exception {
+    // Cipher c = Cipher.getInstance("AES");
+    // c.init(Cipher.ENCRYPT_MODE, key);
+    // return Base64.getEncoder().encodeToString(c.doFinal(message.getBytes()));
+    // }
+
     public static String encryptWithAES(String message, SecretKey key) throws Exception {
-        Cipher c = Cipher.getInstance("AES");
-        c.init(Cipher.ENCRYPT_MODE, key);
-        return Base64.getEncoder().encodeToString(c.doFinal(message.getBytes()));
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+
+        byte[] iv = new byte[16];
+        new SecureRandom().nextBytes(iv);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+        cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+        byte[] ciphertext = cipher.doFinal(message.getBytes());
+
+        byte[] combined = new byte[iv.length + ciphertext.length];
+        System.arraycopy(iv, 0, combined, 0, iv.length);
+        System.arraycopy(ciphertext, 0, combined, iv.length, ciphertext.length);
+
+        return Base64.getEncoder().encodeToString(combined);
     }
 
+    // public static String decryptWithAES(String cipherText, SecretKey key) throws
+    // Exception {
+    // Cipher c = Cipher.getInstance("AES");
+    // c.init(Cipher.DECRYPT_MODE, key);
+    // return new String(c.doFinal(Base64.getDecoder().decode(cipherText)));
+    // }
+
     public static String decryptWithAES(String cipherText, SecretKey key) throws Exception {
-        Cipher c = Cipher.getInstance("AES");
-        c.init(Cipher.DECRYPT_MODE, key);
-        return new String(c.doFinal(Base64.getDecoder().decode(cipherText)));
+        byte[] combined = Base64.getDecoder().decode(cipherText);
+
+        byte[] iv = new byte[16];
+        byte[] ciphertext = new byte[combined.length - 16];
+
+        System.arraycopy(combined, 0, iv, 0, 16);
+        System.arraycopy(combined, 16, ciphertext, 0, ciphertext.length);
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+        cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+        byte[] plainBytes = cipher.doFinal(ciphertext);
+
+        return new String(plainBytes);
     }
 
     public static String encodeKey(Key key) {
