@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.DHParameterSpec;
 
@@ -249,12 +250,17 @@ public class PeerChat {
             BufferedReader in, PrintWriter out) {
         try {
             DHParameterSpec dhSpec = CryptoUtils.getDHParameterSpec();
+            System.out.println("[DEBUG] Sending DH Parameters:");
+            System.out.println("P: " + dhSpec.getP().toString(16));
+            System.out.println("G: " + dhSpec.getG().toString(16));
 
             out.println("P:" + dhSpec.getP().toString(16));
             out.println("G:" + dhSpec.getG().toString(16));
 
             KeyPair dhKeyPair = CryptoUtils.generateEphemeralDHKeyPair(dhSpec);
             String myDHPub = CryptoUtils.encodeKey(dhKeyPair.getPublic());
+            System.out.println("[DEBUG] Sending Ephemeral Public Key:");
+            System.out.println("DH: " + myDHPub);
             out.println("DH:" + myDHPub);
 
             String line, peerPubLine = null;
@@ -323,6 +329,7 @@ public class PeerChat {
 
                 if (message.equalsIgnoreCase("quit")) {
                     socket.close();
+                    System.out.println("[INFO] Chat session ended. Session key discarded.");
                     break;
                 }
             }

@@ -14,6 +14,7 @@ public class MessageLogger {
             }
 
             writer.write("[" + LocalDateTime.now() + "] FROM: " + from + " TO: " + to + "\n");
+            writer.write("ENCRYPTION: AES-ENCRYPTED\n");
             writer.write("ENCRYPTED: " + encrypted + "\n");
             writer.write("SIGNATURE: " + signature + "\n");
             writer.write("----------------------------------------\n");
