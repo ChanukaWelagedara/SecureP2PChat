@@ -521,8 +521,7 @@ public class MainChatFrame extends JFrame {
                     sig = line.substring(4);
 
                 if (enc != null && sig != null) {
-                    // In a full implementation, you would decrypt with AES here
-                    // For now, we'll use RSA decryption
+
                     String decrypted = CryptoUtils.decrypt(enc, privateKey);
                     boolean validSig = CryptoUtils.verify(decrypted, sig, connectedPeerPublicKey);
 
