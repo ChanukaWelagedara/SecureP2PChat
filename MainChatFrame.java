@@ -567,7 +567,7 @@ public class MainChatFrame extends JFrame {
 
         try {
             String secureMessage = CryptoUtils.buildSecureMessage(message);
-            // In a full implementation, you would encrypt with AES here
+        
             String encrypted = CryptoUtils.encrypt(secureMessage, connectedPeerPublicKey);
             String signature = CryptoUtils.sign(secureMessage, privateKey);
 
