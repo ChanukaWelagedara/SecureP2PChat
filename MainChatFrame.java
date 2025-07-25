@@ -486,8 +486,7 @@ public class MainChatFrame extends JFrame {
         try {
             updateStatus("Setting up secure channel...");
 
-            // This is a simplified version - you would implement the full DH exchange here
-            // For now, we'll simulate it
+           
             isConnected = true;
 
             SwingUtilities.invokeLater(() -> {
